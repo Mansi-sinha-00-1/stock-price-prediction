@@ -1,0 +1,112 @@
+
+{% extends "stock_app/base.html" %}
+{% load static %}
+{% block title %}{{ ticker }} Prediction Results{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        {% if error %}
+        <div class="alert alert-danger" role="alert">
+            <h4 class="alert-heading">
+                <i class="fas fa-exclamation-triangle me-2"></i>Error Processing Request
+            </h4>
+            <p>{{ error }}</p>
+            <hr>
+            <p class="mb-0">Please try a different stock ticker or check your input.</p>
+        </div>
+        <div class="text-center mt-4">
+            <a href="{% url 'stock_app:index' %}" class="btn btn-primary">
+                <i class="fas fa-arrow-left me-2"></i>Back to Prediction
+            </a>
+        </div>
+        {% else %}
+        <div class="card shadow mb-4">
+            <div class="card-header bg-success text-white">
+                <h3 class="card-title mb-0">
+                    <i class="fas fa-chart-line me-2"></i>{{ ticker }} Stock Prediction Results
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h5 class="card-title">Stock Info</h5>
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-light">
+                                        <strong>Ticker:</strong> {{ ticker }}
+                                    </li>
+                                    <li class="list-group-item bg-light">
+                                        <strong>Data Period:</strong> {{ period }}
+                                    </li>
+                                    <li class="list-group-item bg-light">
+                                        <strong>Forecast Days:</strong> {{ forecast_days }}
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h5 class="card-title">Actions</h5>
+                                <div class="d-flex justify-content-between">
+                                    <form method="post" action="{% url 'stock_app:download_csv' %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="csv_data" value="{{ csv_data }}">
+                                        <button type="submit" class="btn btn-outline-primary">
+                                            <i class="fas fa-file-csv me-2"></i>Download CSV
+                                        </button>
+                                    </form>
+                                    <a href="{% url 'stock_app:download_chart' %}" class="btn btn-outline-primary">
+                                        <i class="fas fa-file-image me-2"></i>Download Chart
+                                    </a>
+                                    <a href="{% url 'stock_app:index' %}" class="btn btn-outline-secondary">
+                                        <i class="fas fa-redo me-2"></i>New Prediction
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chart-container mb-4">
+                    {% if chart_type == 'plotly' %}
+                        {{ chart|safe }}
+                    {% else %}
+                        <img src="data:image/png;base64,{{ chart }}" alt="{{ ticker }} Stock Chart" class="img-fluid">
+                    {% endif %}
+                </div>
+                
+                <div class="alert alert-info" role="alert">
+                    <h5 class="alert-heading">
+                        <i class="fas fa-info-circle me-2"></i>About This Prediction
+                    </h5>
+                    <p>
+                        The prediction is based on a Linear Regression model trained on historical closing prices.
+                        The model predicts {{ forecast_days }} days into the future.
+                    </p>
+                    <hr>
+                    <p class="mb-0">
+                        <strong>Disclaimer:</strong> Stock market predictions are inherently uncertain. 
+                        This tool is for educational purposes only and should not be considered financial advice.
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+{% if chart_type == 'plotly' %}
+<script>
+// Make Plotly charts responsive
+window.addEventListener('resize', function() {
+    Plotly.Plots.resize(document.getElementById('plotly-chart'));
+});
+</script>
+{% endif %}
+{% endblock %}

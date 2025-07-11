@@ -1,0 +1,111 @@
+
+{% extends "stock_app/base.html" %}
+{% load static %}
+{% block title %}Stock Prediction{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h3 class="card-title mb-0">
+                    <i class="fas fa-search-dollar me-2"></i>Stock Prediction
+                </h3>
+            </div>
+            <div class="card-body">
+                <form method="post" action="{% url 'stock_app:index' %}" class="needs-validation"novalidate>
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="id_ticker" class="form-label">Stock Ticker Symbol</label>
+                        {{ form.ticker }}
+                        <div class="form-text">Enter a valid stock ticker symbol (e.g., AAPL, MSFT, GOOGL)</div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="id_period" class="form-label">Data Period</label>
+                            {{ form.period }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="id_forecast_days" class="form-label">Forecast Days</label>
+                            {{ form.forecast_days }}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="id_chart_type" class="form-label">Chart Type</label>
+                        {{ form.chart_type }}
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-chart-line me-2"></i>Predict Stock Price
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="mt-4">
+            <div class="card shadow">
+                <div class="card-header bg-info text-white">
+                    <h4 class="card-title mb-0">
+                        <i class="fas fa-lightbulb me-2"></i>Popular Stocks
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">Apple (AAPL)</li>
+                                <li class="list-group-item">Microsoft (MSFT)</li>
+                                <li class="list-group-item">Amazon (AMZN)</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-4">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">Alphabet (GOOGL)</li>
+                                <li class="list-group-item">Tesla (TSLA)</li>
+                                <li class="list-group-item">NVIDIA (NVDA)</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-4">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">Meta (META)</li>
+                                <li class="list-group-item">JPMorgan (JPM)</li>
+                                <li class="list-group-item">Visa (V)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Example of adding validation feedback
+(function () {
+    'use strict'
+    
+    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+    var forms = document.querySelectorAll('.needs-validation')
+    
+    // Loop over them and prevent submission
+    Array.prototype.slice.call(forms)
+        .forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+                
+                form.classList.add('was-validated')
+            }, false)
+        })
+})()
+</script>
+{% endblock %}

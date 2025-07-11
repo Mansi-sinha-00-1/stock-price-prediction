@@ -1,0 +1,12 @@
+# Ignore Python cache and compiled files
+__pycache__/
+*.pyc
+
+# Ignore virtual environment
+venv/
+
+# Ignore SQLite database
+db.sqlite3
+
+# Optional: ignore staticfiles if Django collects them
+staticfiles/
